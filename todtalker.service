@@ -1,0 +1,10 @@
+[Unit]
+Description = UECS TOD Talker
+
+[Service]
+ExecStart = /usr/local/bin/todtalkerd.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target
