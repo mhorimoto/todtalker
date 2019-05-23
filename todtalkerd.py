@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/python3
 #coding: utf-8
 import lcd_i2c as lcd
 import datetime
@@ -30,7 +30,6 @@ prevsec = 0
 ip = HOST
 
 while(True):
-    datetime.datetime.now()
     a=datetime.datetime.now()
     d="{0:2d}{1:02d}{2:02d}".format(a.year-2000,a.month,a.day)
     t=int("{0:2d}{1:02d}{2:02d}".format(a.hour,a.minute,a.second))
