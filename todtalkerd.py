@@ -38,9 +38,9 @@ while(True):
         l = lcd.LCD_LINE_2
         u = "U:{0}".format(s)
         lcd.lcd_string(u,l)
-        tn = "Time.mXX"
+        tn = "Time"
         send_UECSdata(tn,config[tn]['room'],config[tn]['region'],config[tn]['order'],config[tn]['priority'],t,HOST)
-        tn = "Date.mXX"
+        tn = "Date"
         send_UECSdata(tn,config[tn]['room'],config[tn]['region'],config[tn]['order'],config[tn]['priority'],d,HOST)
     l = lcd.LCD_LINE_1
     lcd.lcd_string(s,l)
