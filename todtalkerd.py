@@ -1,5 +1,10 @@
 #! /usr/bin/python3
 #coding: utf-8
+#
+# Ver: 1.00
+# Date: 2019/06/21
+# Author: horimoto@holly-linux.com
+#
 import lcd_i2c as lcd
 import datetime
 import time
