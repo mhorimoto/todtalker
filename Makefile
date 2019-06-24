@@ -1,12 +1,20 @@
-EXECP=/usr/local/bin/todtalkerd.py
-SCANP=/usr/local/bin/scanresponse.py
-SYSCD=/etc/systemd/system/todtalker.service
-SCAND=/etc/systemd/system/scanresponse.service
 TARGD=/usr/local/bin
 CFGFD=/etc/uecs
+PYLIBD=/usr/local/lib/python3.6/dist-packages
+SYSTMD=/etc/systemd/system
 NTPDC=/etc/ntp.conf
+
+EXECP=$(TARGD)/todtalkerd.py
+SCANP=$(TARGD)/scanresponse.py
+SYSCD=$(SYSTMD)/todtalker.service
+SCAND=$(SYSTMD)/scanresponse.service
+PYUECS=$(PYLIBD)/PyUECS.py
 CONFF=$(CFGFD)/config.ini
 XMLFF=$(CFGFD)/todtalker.xml
+
+
+$(PYUECS): PyUECS.py
+	cp $^ $(PYLIBD)
 
 $(EXECP): todtalkerd.py
 	install $^ $(TARGD)

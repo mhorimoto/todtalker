@@ -54,6 +54,43 @@ class PyUECS:
                        cfgd['uecsid'],self.myipaddr,self.macaddr)
         self.scanSock.sendto(sdata.encode('utf-8'),self.scanaddr)
 
+    def response_ccmscan(self,p=1):
+        ccmroot = self.ccm.getroot()
+        maxx    = len(ccmroot)
+        maxy    = int((maxx+1)/2)
+        cpag    = int(p)
+        curx    = int(cpag-1)*2
+        ccmt    = ccmroot[curx]
+        ccmnum  = curx+1
+        if (ccmnum < maxx):
+            ccmcount = 2
+        else:
+            ccmcount = 1
+        ccmtt   = self.config[ccmt.text]
+        sdata = "{0}{1}<CCMNUM page=\"{2}\" total=\"{3}\">{4}</CCMNUM>"\
+                "<CCM No=\"{5}\" room=\"{6}\" region=\"{7}\" order=\"{8}\" "\
+                "priority=\"{9}\" cast=\"{10}\" unit=\"{11}\" SR=\"{12}\" "\
+                "LV=\"{13}\">{14}</CCM>"\
+                .format(self.XML_HEADER,self.UECS_HEADER,cpag,maxy,ccmcount,
+                        ccmnum,ccmtt['room'],ccmtt['region'],ccmtt['order'],
+                        ccmtt['priority'],ccmt.attrib['cast'],ccmt.attrib['unit'],ccmt.attrib['SR'],
+                        ccmt.attrib['LV'],ccmt.text)
+        curx   += 1
+        ccmnum  = curx+1
+        if (curx < maxx):
+            if (ccmroot[curx]!=""):
+                ccmt  = ccmroot[curx]
+                ccmtt = self.config[ccmt.text]
+                sdata += "<CCM No=\"{0}\" room=\"{1}\" region=\"{2}\" order=\"{3}\" "\
+                         "priority=\"{4}\" cast=\"{5}\" unit=\"{6}\" SR=\"{7}\" "\
+                         "LV=\"{8}\">{9}</CCM>"\
+                         .format(ccmnum,ccmtt['room'],ccmtt['region'],ccmtt['order'],
+                                 ccmtt['priority'],ccmt.attrib['cast'],ccmt.attrib['unit'],ccmt.attrib['SR'],
+                                 ccmt.attrib['LV'],ccmt.text)
+        sdata += "</UECS>"
+        print(sdata)
+        self.scanSock.sendto(sdata.encode('utf-8'),self.scanaddr)
+
     def send_cnd(self,ccmdata):
         ccmtype = ccmdata["type"]
         ccmval  = ccmdata["value"]
@@ -85,3 +122,4 @@ if __name__ == '__main__':
 #    u.dumpval()
     u.send_cnd(a)
     u.response_nodescan()
+    u.response_ccmscan()
