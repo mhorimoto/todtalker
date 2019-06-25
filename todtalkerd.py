@@ -1,5 +1,11 @@
 #! /usr/bin/python3
 #coding: utf-8
+#
+# TOD Talker
+# Version 1.10
+# Date 2019/06/25
+# Author M.Horimoto
+#
 import lcd_i2c as lcd
 import datetime
 import time
@@ -7,6 +13,8 @@ import configparser
 import netifaces
 from socket import *
 
+XML_HEADER  = "<?xml version=\"1.0\"?>"
+UECS_HEADER = "<UECS ver=\"1.00-E10\">"
 HOST = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
 ADDRESS = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['broadcast']
 PORT = 16520
@@ -15,10 +23,11 @@ def send_UECSdata(typename,room,region,order,priority,data,ip):
     s = socket(AF_INET,SOCK_DGRAM)
     s.setsockopt(SOL_SOCKET,SO_BROADCAST,1)
     s.bind((HOST,PORT))
-    ut = "<?xml version=\"1.0\"?><UECS ver=\"1.00-E10\"><DATA type=\"{0}\" room=\"{1}\" region=\"{2}\" order=\"{3}\" priority=\"{4}\">{5}</DATA><IP>{6}</IP></UECS>".format(typename,room,region,order,priority,data,ip)
+    ut = "{0}{1}<DATA type=\"{2}\" room=\"{3}\" region=\"{4}\" order=\"{5}\" "\
+         "priority=\"{6}\">{7}</DATA><IP>{8}</IP></UECS>"\
+         .format(XML_HEADER,UECS_HEADER,typename,room,region,order,priority,data,ip)
     s.sendto(ut.encode(),(ADDRESS,PORT))
     s.close()
-
 
 ###################################################
 
@@ -58,3 +67,6 @@ while(True):
         lcd.lcd_string(ip,lcd.LCD_LINE_2)
     prevsec = a.second
     time.sleep(1)
+    tn = "cnd.mXX"
+    cndv = 0
+    send_UECSdata(tn,config[tn]['room'],config[tn]['region'],config[tn]['order'],config[tn]['priority'],cndv,HOST)
