@@ -1,5 +1,11 @@
 #! /usr/bin/python3
 #coding: utf-8
+#
+# TOD Talker
+# Version 1.10
+# Date 2019/06/25
+# Author M.Horimoto
+#
 import lcd_i2c as lcd
 import datetime
 import time
