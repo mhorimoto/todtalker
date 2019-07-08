@@ -34,7 +34,8 @@ class ServerThread(threading.Thread):
         self.ADDR = (gethostbyname(self.HOST), self.PORT)
         # bind
         self.udpServSock = socket(AF_INET, SOCK_DGRAM)
-        self.udpServSock.setsockopt(SOL_SOCKET,SO_REUSEADDR|SO_BROADCAST,1)
+        #self.udpServSock.setsockopt(SOL_SOCKET,SO_REUSEADDR|SO_BROADCAST,1)
+        self.udpServSock.setsockopt(SOL_SOCKET,SO_REUSEPORT|SO_BROADCAST,1)
         self.udpServSock.bind(self.ADDR) # HOST, PORTでbinding
         # Get Network information by myself
         self.ipaddress = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
@@ -46,6 +47,7 @@ class ServerThread(threading.Thread):
         while True:
 #            try:
                 data, self.addr = self.udpServSock.recvfrom(self.BUFSIZE) # データ受信
+                toaddr = (self.addr[0],self.PORT)
                 self.data = data.decode('utf-8').rstrip("\n")
                 root = ET.fromstring(self.data)
                 for c1 in root:
@@ -57,7 +59,9 @@ class ServerThread(threading.Thread):
                                  "<UECSID>{4}</UECSID><IP>{5}</IP><MAC>{6}</MAC></UECS>".\
                                  format(XML_HEADER,UECS_HEADER,config['NODE']['name'],config['NODE']['vender'],\
                                         config['NODE']['uecsid'],self.ipaddress,self.macaddr)
-                    self.udpServSock.sendto(self.sdata.encode('utf-8'),self.addr)
+                    #self.udpServSock.sendto(self.sdata.encode('utf-8'),self.addr)
+                    self.udpServSock.sendto(self.sdata.encode('utf-8'),toaddr)
+                    print("{0}\n".format(self.sdata))
 
                 # CCMSCAN
                 elif ( sp == 'CCMSCAN' ):
@@ -95,7 +99,7 @@ class ServerThread(threading.Thread):
                                                ccmtt['priority'],ccmt.attrib['cast'],ccmt.attrib['unit'],ccmt.attrib['SR'],
                                                ccmt.attrib['LV'],ccmt.text)
                     ccmdata += "</UECS>"
-                    self.udpServSock.sendto(ccmdata.encode('utf-8'),self.addr)
+                    self.udpServSock.sendto(ccmdata.encode('utf-8'),toaddr)
                 else:
                     pass
 #            except:
